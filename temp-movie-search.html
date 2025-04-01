@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8" />
+        <title>temp movie ui</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+        />
+
+        <style>
+        #section {
+            padding: 60px 0;
+        }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous">
+    </script>
+    </head>
+
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body shadow rounded-3 border-2">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Home</a>
+
+            <!-- NavBar Toggler for Mobile or smaller browser-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" 
+            aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- NavBar Links -->
+            <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+                <ul class="navbar-nav">
+                    <li class="nav-item ms-2 d-md-inline d-md-none">
+                        <a class="nav-link" href="blockout.html">TEMP Blockout</a>
+                    </li>
+                    <li class="nav-item ms-2 d-md-inline d-none">
+                        <a class="btn btn-outline-light" href="blockout.html">TEMP Blockout</a>
+                    </li>
+                    <li class="nav-item ms-2 d-md-inline d-md-none">
+                        <a class="nav-link" href="temp-movie-search.html">TEMP Movie Search</a>
+                      </li>
+                    <li class="nav-item ms-2 d-md-inline d-none">
+                        <a class="btn btn-outline-light" href="temp-movie-search.html">TEMP Movie Search</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="main">
+        <div class="container p-5 border-start border-end border-bottom border-2 rounded-3 shadow">
+            <div class="row justify-content-center p-4">
+                <div class="col-flex justify-content-center align-items-center text-center">
+                    <h1 class="display-4">Movie Search</h1>
+                    <h5>Enter movie you would like the information of</h5>
+                    <form action="echo.php" method="POST">
+                        Your input: <input name ="data" id="data">
+                        <input class="button round" type="button" value="Submit" onclick="sendSearch()"> 
+                    </form>
+                    <div id="response"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // send movie search
+        function sendSearch(){
+            var input = $("#data").val();
+            if (input.length == 0) return;
+            movie_search(input);
+            $("#data").val("");
+        }
+
+        // USCities seach api call
+        function movie_search(input){
+            $.get("https://moviesearch.azurewebsites.net/" +input,
+                function(result){
+                    if (result && Array.isArray(result) && result.length > 0) {
+                        let output = "<h3>Search Results:</h3>";
+                        result.forEach(movie => {
+                            output += `
+                                <div class="movie">
+                                    <h4>${movie.title} (${movie.release_date})</h4>
+                                    <p><strong>Rating:</strong> ${movie.vote_average} (${movie.vote_count} votes)</p>
+                                    <p><strong>Overview:</strong> ${movie.overview}</p>
+                                    <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title} poster">
+                                    <hr>
+                                </div>
+                            `;
+                        });
+                        $("#response").html(output);
+                    } else {
+                        $("#response").html("<p>No results found</p>");
+                    }
+                });
+        }
+
+        //ajax input field defaults to basic GET Ajax request when enter is pressed
+        document.getElementById('data').addEventListener('keypress',
+            function(event) {
+                // If Enter key (key code 13) is pressed
+                if (event.key ==='Enter') {
+                    event.preventDefault(); // Prevent default form submission
+                    sendSearch();
+                }
+            }
+        )
+    </script>
+
+
+    <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+    ></script>
+</html>
