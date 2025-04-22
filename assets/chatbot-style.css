@@ -73,6 +73,8 @@ body.chat-open {
             margin: 8px 0;
             font-size: 16px;
             padding: 16px;
+            /*text-spacing-trim: ;*/
+            color: black;
         }
 
         div.model {
@@ -120,6 +122,7 @@ body.chat-open {
             border-radius: 20px;
             padding-left: 20px;
             font-size: 16px;
+            color: black;
         }
 
         button {

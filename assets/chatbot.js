@@ -99,3 +99,10 @@ document.querySelector(".chat-window button.close")
     $("#chatbot-open-main").hide();
     $("#chatbot-closed-main").show();
 });
+
+document.querySelector(".chat-window .input-area input")
+    .addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
