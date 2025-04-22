@@ -34,15 +34,20 @@ function buildInput(input){
     return result;
 }
 
-async function getPrediction(input){
+function getPrediction(input){
     let predictionInput = buildInput(input);
-    let predtionRes = await fetch('https://data-mining-t89i.onrender.com/movie-rating-prediction/api/v1/movies/predict-rating', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
+    $.ajax({
+        url: "https://data-mining-t89i.onrender.com/movie-rating-prediction/api/v1/movies/predict-rating",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(predictionInput),
+        success: function(result) {
+            console.log('Prediction result:', result);
         },
-        body: JSON.stringify(predictionInput)
+        error: function() {
+            console.log(`Error: ${error}`);
+            $("#closed-response").html(`<p class="text-danger">Something went wrong. Try a different movie.</p>`);
+            $("#open-response").html(`<p class="text-danger">Something went wrong. Try a different movie.</p>`);
+        }
     });
-    // console.log('Prediction response:', predtionRes);
-    return predtionRes;
 }
