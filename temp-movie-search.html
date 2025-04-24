@@ -1,3 +1,5 @@
+<!-- NOT IN USE ANYMORE, FOR CURRENT MOVIE SEARCH GO TO movie-search.html -->
+
 <!DOCTYPE html>
 <html data-bs-theme="dark">
     <head>
@@ -59,7 +61,7 @@
     </nav>
 
     <!-- Formatting for when chatbot is closed -->
-    <section id="chatbot-closed-main">
+    <section id="chatbot-main">
         <div class="container p-5 border-start border-end border-bottom border-2 rounded-bottom-3 shadow">
             <div class="row justify-content-center p-4">
                 <div class="col-flex justify-content-center align-items-center text-center">
@@ -67,28 +69,10 @@
                     <h5>Enter movie you would like the information of</h5>
                     <p class="p-1"><strong>Note:</strong> The movie search microservice is hosted on Azure and may take a few seconds to load.</p>
                     <form action="echo.php" method="POST">
-                        Your input: <input name ="closed-data" id="closed-data">
-                        <input class="button round" type="button" value="Submit" onclick="sendSearchClosed()"> 
+                        Your input: <input name ="data" id="data">
+                        <input class="button round" type="button" value="Submit" onclick="sendSearch()"> 
                     </form>
-                    <div id="closed-response"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Formatting for when chatbot is open -->
-    <section id="chatbot-open-main">
-        <div class="container p-5 border-start border-end border-bottom border-2 rounded-bottom-3 shadow">
-            <div class="row justify-content-center p-4">
-                <div class="col-10 justify-content-center align-items-center text-start">
-                    <h1 class="display-4">Movie Search</h1>
-                    <h5>Enter movie you would like the information of</h5>
-                    <p class="p-1"><strong>Note:</strong> The movie search microservice is hosted on Azure and may take a few seconds to load.</p>
-                    <form action="echo.php" method="POST">
-                        Your input: <input name ="open-data" id="open-data">
-                        <input class="button round" type="button" value="Submit" onclick="sendSearchOpen()"> 
-                    </form>
-                    <div id="open-response"></div>
+                    <div id="response"></div>
                 </div>
             </div>
         </div>
@@ -126,67 +110,71 @@
     <script type="module" src="assets/chatbot.js"></script>
 
     <script>
-        // Ensure the chatbot is hidden by default
-        $("#chatbot-open-main").hide();
         // send movie search
-        function sendSearchClosed(){
-            var input = $("#closed-data").val();
+        function sendSearch(){
+            var input = $("#data").val();
             if (input.length == 0) return;
             movie_search(input);
-            $("#closed-data").val("");
-        }
-
-        function sendSearchOpen(){
-            var input = $("#open-data").val();
-            if (input.length == 0) return;
-            movie_search(input);
-            $("#open-data").val("");
+            $("#data").val("");
         }
 
         // Movie seach api call
-        function movie_search(input){
-            $.get("https://moviesearch.azurewebsites.net/" +input,
-                function(result){
-                    if (result && Array.isArray(result) && result.length > 0) {
-                        let output = "<h3>Search Results:</h3>";
-                        result.forEach(movie => {
-                            output += `
-                                <div class="movie">
-                                    <h4>${movie.title} (${movie.release_date})</h4>
-                                    <p><strong>Rating:</strong> ${movie.vote_average} (${movie.vote_count} votes)</p>
-                                    <p><strong>Overview:</strong> ${movie.overview}</p>
-                                    <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title} poster">
-                                    <hr>
+        function movie_search(input) {
+            $.get("https://moviesearch.azurewebsites.net/" + input, async function(result) {
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let output = "<h3>Search Results:</h3>";
+        
+                    for (let movie of result) {
+                        output += `
+                            <div class="movie">
+                                <h4>${movie.title} (${movie.release_date})</h4>
+                                <p><strong>Rating:</strong> ${movie.vote_average} (${movie.vote_count} votes)</p>
+                                <p><strong>Overview:</strong> ${movie.overview}</p>
+                                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title} poster">
+                                <div class="prediction" id="prediction-${movie.id}">
+                                    <em>Loading predicted rating...</em>
                                 </div>
-                            `;
-                            getPrediction(movie);
+                                <hr>
+                            </div>
+                        `;
+        
+                        // Send prediction data to your new backend proxy
+                        $.ajax({
+                            url: "https://moviesearch.azurewebsites.net/predict",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(movie),
+                            success: function(predictedData) {
+                                $(`#prediction-${movie.id}`).html(
+                                    `
+                                        <p><strong>Predicted Rating:</strong> ${predictedData?.predictedRating || JSON.stringify(predictedData)}</p>
+                                        <p><strong>Processing Time:</strong> ${predictedData?.processingTimeMS || JSON.stringify(predictedData)}</p>
+                                        <p><strong>Model Used:</strong> ${predictedData?.modelUsed || JSON.stringify(predictedData)}</p>
+                                    `
+                                );
+                            },
+                            error: function(err) {
+                                console.error("Prediction API error:", err);
+                                $(`#prediction-${movie.id}`).html(`<p><strong>Predicted Rating:</strong> Error fetching</p>`);
+                            }
                         });
-                        $("#closed-response").html(output);
-                        $("#open-response").html(output);
-                    } else {
-                        $("#closed-response").html("<p>No results found</p>");
-                        $("#open-response").html("<p>No results found</p>");
                     }
-                });
+        
+                    $("#response").html(output);
+                } else {
+                    $("#response").html("<p>No results found</p>");
+                }
+            });
         }
+        
 
         //ajax input field defaults to basic GET Ajax request when enter is pressed
-        document.getElementById('closed-data').addEventListener('keypress',
+        document.getElementById('data').addEventListener('keypress',
             function(event) {
                 // If Enter key (key code 13) is pressed
                 if (event.key ==='Enter') {
                     event.preventDefault(); // Prevent default form submission
-                    sendSearchClosed();
-                }
-            }
-        )
-
-        document.getElementById('open-data').addEventListener('keypress',
-            function(event) {
-                // If Enter key (key code 13) is pressed
-                if (event.key ==='Enter') {
-                    event.preventDefault(); // Prevent default form submission
-                    sendSearchOpen();
+                    sendSearch();
                 }
             }
         )
