@@ -165,7 +165,7 @@
 
                                 $(`#prediction-${movie.id}-modal`).html(`
                                     <div class="d-flex flex-column">
-                                        <p><strong>Predicted Rating:</strong> ${predictedData?.predictedRating}</p>
+                                        <p><strong>Predicted Rating:</strong> ${Number(predictedData?.predictedRating).toFixed(3)}</p>
                                         <p><strong>Processing Time:</strong> ${predictedData?.processingTimeMs} <strong>ms</strong></p>
                                         <p><strong>Model Used:</strong> ${predictedData?.modelUsed}</p>
                                     </div>
