@@ -137,10 +137,19 @@
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <img src="https://image.tmdb.org/t/p/w300${movie.backdrop_path || movie.poster_path}" class="float-start content-center me-3 mb-3" style="width: 300px;">
+                                            <div class="d-flex flex-row mb-3">
+                                                <img src="https://image.tmdb.org/t/p/w300${movie.backdrop_path || movie.poster_path}" class="me-3" style="width: 300px;">
+                                                <div id="prediction-${movie.id}-modal" class="flex-grow-1 d-flex align-items-center justify-content-center">
+                                                    <div class="text-center">
+                                                        <div class="spinner-border text-info mb-2" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                        <div>Fetching model prediction...</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <p><strong>Release Date:</strong> ${movie.release_date}</p>
                                             <p><strong>Full Overview:</strong> ${movie.overview}</p>
-                                            <div id="prediction-${movie.id}-modal"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -154,10 +163,13 @@
                             data: JSON.stringify(movie),
                             success: function(predictedData) {
 
-                                $(`#prediction-${movie.id}-modal`).html(
-                                    `<p><strong>Predicted Rating:</strong> ${predictedData?.predictedRating}</p>
-                                     <p><strong>Processing Time:</strong> ${predictedData?.processingTimeMs} <strong> ms</strong></p>
-                                     <p><strong>Model Used:</strong> ${predictedData?.modelUsed}</p>`);
+                                $(`#prediction-${movie.id}-modal`).html(`
+                                    <div class="d-flex flex-column">
+                                        <p><strong>Predicted Rating:</strong> ${Number(predictedData?.predictedRating).toFixed(3)}</p>
+                                        <p><strong>Processing Time:</strong> ${predictedData?.processingTimeMs} <strong>ms</strong></p>
+                                        <p><strong>Model Used:</strong> ${predictedData?.modelUsed}</p>
+                                    </div>
+                                `);
                             },
                             error: function() {
                                 $(`#prediction-${movie.id}`).html("<p><strong>Predicted Rating:</strong> Error fetching</p>");
