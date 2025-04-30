@@ -7,8 +7,34 @@ const model = genAI.getGenerativeModel({
 });
 
 let messages = {
-    history: [],
-}
+    history: [
+      {
+        role: "user",
+        parts: [{ text: "Who are the creators of this website?" }]
+      },
+      {
+        role: "model",
+        parts: [{ text:
+          `Justin Jones: Computer Science major at the University of Dayton. Link: https://hyouka.xyz/
+  Tyler Tackett: Computer Science major at the University of Dayton. Link: http://cps449-tackettt2.eastus.cloudapp.azure.com/homepage.html
+  John Tran: Computer Science Major at the International University - Vietnam National University. Link: https://github.com/Khanhhungtran23
+  Jane Nguyen: Computer Science Major at the International University - Vietnam National University.
+  Luke Pham: Computer Engineer Major at the International University - Vietnam National University.` }]
+      },
+      {
+        role: "user",
+        parts: [{
+          text: "You are a movie recommendation assistant. When users ask for a suggestion, respond with 2–3 movies, each with a 1–2 sentence reason why it fits. Be clear, concise, and focused on relevance to the user's input."
+        }]
+      },
+      {
+        role: "model",
+        parts: [{
+          text: "Understood. I will provide concise movie recommendations tailored to the user's request, with brief explanations for each."
+        }]
+      }
+    ]
+  };
 
 let isFirstMessage = true;
 

@@ -1,0 +1,22 @@
+#section {
+    padding: 60px 0;
+  }
+  .card {
+    width: 300px !important;
+    height: 450px;
+    justify-content: center;
+    margin: auto;
+  }
+  .card-img-top {
+    height: 250px;
+    object-fit: cover;
+  }
+  .card-body {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-text {
+    flex-grow: 1;
+    overflow: auto;
+  }
