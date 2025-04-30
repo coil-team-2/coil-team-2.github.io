@@ -142,7 +142,7 @@
                                 <div class="card h-100 bg-dark text-light shadow">
                                     <img src="${posterUrl}"" class="card-img-top" alt="${movie.title} poster">
                                     <div class="card-body">
-                                        <h5 class="card-title">${movie.title} (${movie.release_date})</h5>
+                                        <h5 class="card-title">${movie.title} (${movie.release_date.substring(0, 4)})</h5>
                                         <p class="card-text"><strong>Rating:</strong> <img src="assets/star.png" alt="Rating Icon" class="ms-2 me-0 align-middle" style="height: 18px;"> ${movie.vote_average} (${movie.vote_count} votes)</p>
                                         <p class="card-text">${movie.overview.substring(0, 100)}...</p>
                                         <button class="btn btn-outline-info mt-2" data-bs-toggle="modal" data-bs-target="#modal-${movie.id}">More Info</button>
@@ -171,6 +171,7 @@
                                             </div>
                                             <p><strong>Release Date:</strong> ${movie.release_date}</p>
                                             <p><strong>Full Overview:</strong> ${movie.overview}</p>
+                                            <a href="https://letterboxd.com/film/${slugify(movie.title)}/" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-50"> Rate the movie</a>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +194,6 @@
                                         </p>
                                         <p><strong>Processing Time:</strong> ${predictedData?.processingTimeMs} <strong>ms</strong></p>
                                         <p><strong>Model Used:</strong> ${predictedData?.modelUsed}</p>
-                                        <p>Rate the movie: <a href="https://letterboxd.com/film/${slugify(movie.title)}/" target="_blank" rel="noopener noreferrer">Click here</a></p>
 
                                     </div>
                                 `);
